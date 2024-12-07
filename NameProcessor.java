@@ -1,3 +1,7 @@
+//Pablo Mendoza 
+//CPSC-39
+//12/6/2024
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -8,6 +12,7 @@ public class NameProcessor {
         this.filePath = filePath;
     }
 
+    //returns arraylist of first names from the Names.txt file
     public ArrayList<String> getFirstNames() {
         ArrayList<String> firstNames = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -22,6 +27,7 @@ public class NameProcessor {
         return firstNames;
     }
 
+    //returns arraylist of last names from the Names.txt file
     public ArrayList<String> getLastNames() {
         ArrayList<String> lastNames = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {

@@ -1,3 +1,7 @@
+//Pablo Mendoza 
+//CPSC-39
+//12/6/2024
+
 public class Order{
 	private String name;
 	private int request;
