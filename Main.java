@@ -92,22 +92,37 @@ public class Main{
 				employee.setProficiency(employeeProficiency + 1);
 			}
 		}
-		System.out.println(proficiency);
+
+		for(int i = 0; i < businessList.size(); i++){
+			Business business = businessList.get(i);
+			int businessCompetitveness = business.getCompetitveness();
+			int negOrPos = random.nextInt(2);
+			int amount = random.nextInt(3);
+			if(negOrPos == 1 && businessCompetitveness < 50){
+				business.setCompetitveness(businessCompetitveness + amount);
+			}else if(negOrPos == 0 && businessCompetitveness > 10){
+				business.setCompetitveness(businessCompetitveness - amount);
+			}
+		}
+
+
+		int negOrPos = random.nextInt(2);
+		int amount = random.nextInt(3);
+		if(negOrPos == 1 && market > 10){
+			market += amount;
+		}else if(negOrPos == 0 && market < 50){
+			market -= amount;
+		}
+
 		output += (proficiency/5);
 	}
 	
-
-	public static void updateBusinesses(){
-		//for(int i = 0; i < businessList.size(); i++){
-			//proficiency += (businessList.get(i)).getProficiency();
-		//}
-		//output += proficiency;
-	}
 	
 	public static void weekPass(NameGenerator nameGenerator){
 		int competition = 0; 
 		for(int i = 0; i < businessList.size(); i++){
 			competition += (businessList.get(i)).getCompetitveness();
+			System.out.println((businessList.get(i)).getCompetitveness());
 		}
 
 		for(int i = 0; i < market; i++){
