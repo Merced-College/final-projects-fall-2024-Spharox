@@ -3,11 +3,14 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.io.*;
 
 public class Main{
 
-	static int money = 10000, market = 50, output, competitveness = 30, week = 0;
+	static int money = 50000, market = 30, output = 0, competitveness = 30, week = 1;
 	static Queue<Order> orders = new LinkedList<>();
+	static ArrayList<Employee> employeeList = new ArrayList<>();
+	static ArrayList<Business> businessList = new ArrayList<>();
 	static Random random = new Random();
 
 	public static void main(String[] args){
@@ -18,23 +21,23 @@ public class Main{
         ArrayList<String> lastNames = nameProcessor.getLastNames();
 
         NameGenerator nameGenerator = new NameGenerator(firstNames, lastNames);
-        ArrayList<Employee> employeeList = nameGenerator.getEmployees(30);
-        ArrayList<Business> businessList = nameGenerator.getBusinesses(15);
+        employeeList = nameGenerator.getEmployees(30);
+        businessList = nameGenerator.getBusinesses(15);
 
         System.out.println("Welcome to business simulator game! Please enter your enterprises name - ");
-		String userName = scanner.nextLine(); 
-		updateVariables(employeeList);
-		weekPass(businessList, nameGenerator);
+		String userName = scanner.nextLine();
+		orderChecker();
 
-		while(true){
+		while(money >= 0){
 
-			System.out.println("\nWeek " + week + ": \n" + userName + " -\nMoney = 10000\nCompetitveness = " + competitveness + 
-			"\nEnter 1 to pass week, 2 to check market, 3 to check employess, 4 to check orders, 7 to exit game\n");
+			System.out.println("\nWeek " + week + ": \n" + userName + " -\nMoney = " + money + "\nCompetitveness = " + competitveness + 
+			"\nEnter 1 to pass week, 2 to check market, 3 to check employess, 4 to check orders, 5 for upgrades, 7 to exit game\n");
 			String playerResponse = scanner.nextLine(); 
-			
 			switch (playerResponse) {
 			case "1":
-				weekPass(businessList, nameGenerator);
+				updateVariables();
+				weekPass(nameGenerator);
+				orderChecker();
 				break;
 			case "2":
 				for(Business business : businessList) {
@@ -51,6 +54,23 @@ public class Main{
     				System.out.println(order);
 				}
 				break;
+			case "5":
+
+				System.out.println("\nWhich upgrade do you want? \n1 - Five More Employees (20000)\n2 - Proficiency Training (40000)\n Advertising Campgain (50000)");
+				String upgradeResponse = scanner.nextLine(); 
+				switch (upgradeResponse) {
+				case "1":
+					hireEmployees(nameGenerator);
+					break;
+				case "2":
+					proficiencyTraining();
+					break;
+				case "3":
+					advertisingCampgain();
+					break;
+				}
+				break;
+
 			case "7":
 				System.out.println("Congratulations! You did not go broke!");
 				return;
@@ -58,35 +78,99 @@ public class Main{
 				System.out.println("Incorrect input deteced, Enter 1 to pass week, 2 to check market, 3 to check employess, 7 to exit game");
 			}
 		}
+
+		System.out.println("Game Over, you went broke!");
 	}
 
-	public static void updateVariables(ArrayList<Employee> employeeList){
+	public static void updateVariables(){
 		int proficiency = 0;
 		for(int i = 0; i < employeeList.size(); i++){
-			proficiency += (employeeList.get(i)).getProficiency();
+			Employee employee = employeeList.get(i);
+			int employeeProficiency = employee.getProficiency();
+			proficiency += employeeProficiency;
+			if(employeeProficiency < 700){
+				employee.setProficiency(employeeProficiency + 1);
+			}
 		}
-		output = proficiency;
-
-
-
+		System.out.println(proficiency);
+		output += (proficiency/5);
 	}
 	
-	public static void weekPass(ArrayList<Business> businessList, NameGenerator nameGenerator){
+
+	public static void updateBusinesses(){
+		//for(int i = 0; i < businessList.size(); i++){
+			//proficiency += (businessList.get(i)).getProficiency();
+		//}
+		//output += proficiency;
+	}
+	
+	public static void weekPass(NameGenerator nameGenerator){
 		int competition = 0; 
 		for(int i = 0; i < businessList.size(); i++){
 			competition += (businessList.get(i)).getCompetitveness();
 		}
-		
+
 		for(int i = 0; i < market; i++){
 			if (random.nextInt(competition) < competitveness) {
             	orders.add(nameGenerator.getOrder());
         	}
 		}
+
+		for(int i = 0; i < employeeList.size(); i++){
+			money -= (employeeList.get(i)).getSalary();
+		}
 		week ++;
 	}
 	
 	public static void orderChecker(){
-		
+		while (!orders.isEmpty()){ 
+	        Order order = orders.peek(); 
+
+	        if (order != null && output > order.getRequest()) { 
+	            money += order.getPayment();
+	            output -= order.getRequest();
+	            orders.remove(); 
+        	} else {
+        	    break; 
+        	}
+    	}
+
+	    if (orders.isEmpty()) {
+	        System.out.println("You have no more orders!");
+	    }
 	}
 
+	public static void hireEmployees(NameGenerator nameGenerator){
+		if(money >= 20000){
+			ArrayList<Employee> newEmployees = nameGenerator.getEmployees(5);
+			employeeList.addAll(newEmployees.subList(0, 5));
+			money -= 20000;
+			System.out.println("More employees successfully hired!");
+		}else{
+			System.out.println("Insufficient funds to hire new employees!");
+		}
+	}
+
+	public static void proficiencyTraining(){
+		if(money >= 40000){
+			for(int i = 0; i < employeeList.size(); i++){
+				Employee employee = employeeList.get(i);
+				employee.setProficiency(employee.getProficiency() + 100);
+			}
+			money -= 40000;
+			System.out.println("More employees were successfully trained!");
+		}else{
+			System.out.println("Insufficient funds to train employees!");
+		}
+	}
+
+	public static void advertisingCampgain(){
+		if(money >= 50000){
+			competitveness += 10;
+			money -= 50000;
+			System.out.println("Advertising Campgain successfully lauched!");
+		}else{
+			System.out.println("Insufficient funds to launch an Advertising Campgain!");
+		}
+	}
 }

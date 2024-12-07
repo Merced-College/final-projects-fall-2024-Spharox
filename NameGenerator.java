@@ -17,7 +17,7 @@ public class NameGenerator{
 
 		for(int i = 0; i < amount; i++){
 			int[] rng = getRandomEmployeeNumbers(firstNames.size());
-			employees.add(new Employee(firstNames.get(rng[0]) + " " + lastNames.get(rng[1]), rng[2], rng[3], 70));
+			employees.add(new Employee(firstNames.get(rng[0]) + " " + lastNames.get(rng[1]), 400, rng[2], 70));
 		}
 		return employees;
 	}
@@ -34,16 +34,15 @@ public class NameGenerator{
 
 	public Order getOrder(){
 		int[] rng = getRandomOrderNumbers(firstNames.size());
-		Order order = new Order(lastNames.get(rng[0]) + "'s order" , (500 * rng[1]), (5000 * rng[1]) + (2000 * (rng[1] - 1)));
+		Order order = new Order(lastNames.get(rng[0]) + "'s order" , (750 * rng[1]), (4000 * rng[1]) + (1000 * (rng[1] - 1)));
 		return order;
 	}
 
 	private static int[] getRandomEmployeeNumbers(int size) {
-		int[] rng = new int[4];
+		int[] rng = new int[3];
 		rng[0] =  ThreadLocalRandom.current().nextInt(0, size);
         rng[1] =  ThreadLocalRandom.current().nextInt(0, size); 
-    	rng[2] =  ThreadLocalRandom.current().nextInt(100, 150);
-    	rng[3] =  ThreadLocalRandom.current().nextInt(30, 50);
+    	rng[2] =  ThreadLocalRandom.current().nextInt(300, 500);
     	return rng;
     }
 
